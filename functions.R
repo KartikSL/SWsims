@@ -1,7 +1,6 @@
 
 ########## Contains all functions used except actual bootstrap simulations ############## 
 
-setwd("~/Dropbox/small world detection SupSBM/Small World Bootstrap")
 source("small_world_test.R")
 
 #Define function to simulate WS graphs
