@@ -49,9 +49,6 @@ invisible(stopCluster(cl))
 detachDoParallel()
 mpi.quit()
 
-
-######### Power ##########
-
 nw.er.500.sparse.stat <- compute_cl(nw.list.er.sparse.2, beta.nw.list)
 nw.er.500.sparse.stat$null <- rep("ER", dim(nw.er.500.sparse.stat)[1])
 
