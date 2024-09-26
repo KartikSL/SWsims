@@ -1,7 +1,6 @@
 
 ########## Contains all functions used except actual bootstrap simulations ############## 
 
-source("small_world_test.R")
 
 #Define function to simulate WS graphs
 simulate_ws <- function(p, d, s, n){
@@ -9,64 +8,12 @@ simulate_ws <- function(p, d, s, n){
                            multiple = FALSE))
 }
 
-#Define function to simulate Newman-Watts graphs ER/lattice
-simulate_nw <- function(n, d, beta){
-  #Generate lattice
-  if(beta != 0){
-    l <- as_adj(sample_smallworld(1, n, ceiling(d*beta), 0))
-  }
-  else{
-    l <- 0
-  }
-  #Generate random edges
-  e <- as_adj(sample_gnp(n, 2*d*(1 - beta)/(n-1)))
-  #Superimpose edges on lattice
-  return(graph_from_adjacency_matrix(l + e, "undirected", weighted = TRUE))
-}
 
 #Define function to simulate list of WS graphs
 simulate_ws_list <- function(p, d, s, n){
   return(replicate(m, simulate_ws(p, d, s, n), simplify = FALSE))
 }
 
-#Define function to simulate list of NW graphs
-# simulate_nw_list <- function(beta, n, d, m){
-#   return(replicate(m, simulate_nw(n, d, beta), simplify = FALSE))
-# }
-
-#Define function to get C/L
-get_t <- function(g){
-  L <- mean_distance(g)
-  C <- transitivity(g, type = "global")
-  return(C/L)
-}
-
-#Define function to get MME test statistic
-get_t_mme <- function(g){
-  g.degree <- degree(g)
-  d.bar <- mean(g.degree)
-  sd.d <- sd(g.degree)
-  n <- gorder(g)
-  D <- sqrt((d.bar*(n - 1))^2 - 4*(n - 1)*(d.bar*sd.d)^2)
-  y <- (d.bar*(n - 1) - D)/(2*d.bar^2)
-  return(1 - y)
-}
-
-#Define clustering based statistic 1
-get_t_clust_1 <- function(g){
-  C <- transitivity(g, type = "global")
-  E <- ecount(g)
-  n <- gorder(g)
-  return(C - 2*E/(n*(n - 1)))
-}
-
-#Define clustering based statistic 2
-get_t_clust_2 <- function(g){
-  C <- transitivity(g)
-  E <- ecount(g)
-  n <- gorder(g)
-  return(0.5*C*n*(n - 1)/E)
-}
 
 #Small world coefficient using normalized C
 get_t_mod <- function(g){
@@ -85,20 +32,6 @@ get_range <- function(df){
 }
 
 
-#Function ro simulate NW graphs SBM/lattice
-simulate_nw_SBM <- function(n, d, beta){
-  #Generate lattice
-  l <- as_adj(sample_smallworld(1, n, ceiling(d*beta), 0))
-  #Generate random edges
-  k=2
-  clusters = c(rep(1,n/2),rep(2,n/2))
-  phat = matrix(0.5,k,k)
-  diag(phat) = rep(1.5,k)
-  p = 2*d*(1 - beta)/(n-1)*phat
-  e <- as_adj(sample_from_SBM(n,k, p,clusters))
-  #Superimpose edges on lattice
-  return(graph_from_adjacency_matrix(l + e, "undirected",weighted=TRUE))
-}
 
 #Covariance matrix for 
 get_sigma <- function(n, p){
@@ -109,18 +42,6 @@ get_sigma <- function(n, p){
   return(3*(n - 2)*choose(n, 3)*p*(1 - p)*matrix(m, nrow = 2))
 }
 
-#Adjusted distances for disconnected networks
-cl_dist <- function(g){
-  if(is_connected(g)){
-    return(mean_distance(g))
-  }
-  dist.mat <- distances(g)
-  #Get off diagonal elements
-  dist <- dist.mat[row(dist.mat) != col(dist.mat)]
-  #Replace inf distances with diamater
-  dist[dist == Inf] <- diameter(g)
-  return(mean(dist))
-}
 
 #Get data into format for ggplot
 refactor_data <- function(data.er, data.sbm, data.dcsbm, data.cl){

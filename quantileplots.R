@@ -1,5 +1,4 @@
-
-##### Power curves #####
+###### Code for figures 3 and 4 in the manuscript
 
 detachDoParallel <- function() {
   detach("package:doParallel")
@@ -22,8 +21,11 @@ slaves <- 150
 { sink("/dev/null"); cl <- makeCluster(slaves, type="MPI"); sink(); } # number of MPI tasks to use
 registerDoParallel(cl)
 
-#source("small_world_test_hpc.R")
+# for serial functions
 source("small_world_test.R")
+
+# for parallel functions used with the supercomputer 
+# source("small_world_test_hpc.R")
 
 beta.nw.list <- as.list(seq(0, 1, 0.1))
 
@@ -61,9 +63,6 @@ nw.dcsbm.500.sparse.stat$null <- rep("DCSBM", dim(nw.dcsbm.500.sparse.stat)[1])
 nw.cl.500.sparse.stat <- compute_cl(nw.list.cl.sparse.2, beta.nw.list)
 nw.cl.500.sparse.stat$null <- rep("CL", dim(nw.cl.500.sparse.stat)[1])
 
-# nw.dcsbm.400.sparse.stat <- compute_cl(nw.list.dcsbm.sparse.2, beta.nw.list)
-# nw.dcsbm.400.sparse.stat$null <- rep("DCSBM", dim(nw.dcsbm.400.sparse.stat)[1])
-# 
 nw.dcsbmsdh.500.sparse.stat <- compute_cl(nw.list.dcsbm.sparse.2.sdh, beta.nw.list)
 nw.dcsbmsdh.500.sparse.stat$null <- rep("DCSBMSDH", dim(nw.dcsbmsdh.500.sparse.stat)[1])
 
